@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/view/pages/widgets/post_card.dart';
 
 class HomePage extends StatelessWidget {
   // ignore: use_super_parameters
@@ -8,7 +9,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Leaf")),
-      body: Center(child: Text("Hello world!")),
+      body: ListView.builder(
+        itemCount: 5,
+        itemBuilder: (BuildContext context, int index) {
+          return PostCard();
+        },
+      ),
     );
   }
 }

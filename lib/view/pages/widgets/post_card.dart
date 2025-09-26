@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/helper/demo_values.dart';
+import 'package:flutter_demo/view/pages/widgets/post_page.dart';
+
+bool _isLandscape(BuildContext context) =>
+    MediaQuery.of(context).orientation == Orientation.landscape;
 
 class PostCard extends StatelessWidget {
   const PostCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 6 / 3,
-      child: Card(
-        elevation: 2,
-        child: Container(
-          margin: const EdgeInsets.all(4.0),
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            children: <Widget>[
-              _Post(),
-              Divider(color: Colors.grey),
-              _PostDetails(),
-            ],
+    final aspectRatio = _isLandscape(context) ? 6 / 2 : 6 / 3;
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return PostPage();
+            },
+          ),
+        );
+      },
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Card(
+          elevation: 2,
+          child: Container(
+            margin: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              children: <Widget>[
+                _Post(),
+                Divider(color: Colors.grey),
+                _PostDetails(),
+              ],
+            ),
           ),
         ),
       ),

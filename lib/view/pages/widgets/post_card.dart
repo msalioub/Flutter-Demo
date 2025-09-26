@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/helper/demo_values.dart';
+import 'package:flutter_demo/model/post_model.dart';
+import 'package:flutter_demo/view/pages/widgets/inherited_widgets/inherited_post_model.dart';
 import 'package:flutter_demo/view/pages/widgets/post_page.dart';
+import 'package:intl/intl.dart';
 
 bool _isLandscape(BuildContext context) =>
     MediaQuery.of(context).orientation == Orientation.landscape;
 
 class PostCard extends StatelessWidget {
-  const PostCard({Key? key}) : super(key: key);
+  final PostModel postData;
+
+  const PostCard({Key? key, required this.postData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class PostCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (BuildContext context) {
-              return PostPage();
+              return PostPage(postData: postData);
             },
           ),
         );
@@ -30,12 +35,15 @@ class PostCard extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.all(4.0),
-            child: Column(
-              children: <Widget>[
-                _Post(),
-                Divider(color: Colors.grey),
-                _PostDetails(),
-              ],
+            child: InheritedPostModel(
+              postData: postData,
+              child: Column(
+                children: <Widget>[
+                  _Post(),
+                  Divider(color: Colors.grey),
+                  _PostDetails(),
+                ],
+              ),
             ),
           ),
         ),
@@ -61,10 +69,12 @@ class _PostTitleAndSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PostModel postData = InheritedPostModel.of(context).postData;
+
     final TextStyle? titleTheme = Theme.of(context).textTheme.titleMedium;
     final TextStyle? summaryTheme = Theme.of(context).textTheme.bodyMedium;
-    final String title = DemoValues.postTitle;
-    final String summary = DemoValues.postSummary;
+    final String title = postData.title;
+    final String summary = postData.summary;
 
     return Expanded(
       flex: 3,
@@ -89,7 +99,8 @@ class _PostImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(flex: 2, child: Image.asset(DemoValues.postImage));
+    final PostModel postData = InheritedPostModel.of(context).postData;
+    return Expanded(flex: 2, child: Image.asset(postData.imageURL));
   }
 }
 
@@ -109,6 +120,7 @@ class _UserNameAndEmail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PostModel postData = InheritedPostModel.of(context).postData;
     return Expanded(
       flex: 5,
       child: Padding(
@@ -117,9 +129,9 @@ class _UserNameAndEmail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(DemoValues.userName),
+            Text(postData.author.name),
             SizedBox(height: 2.0),
-            Text(DemoValues.userEmail),
+            Text(postData.author.email),
           ],
         ),
       ),
@@ -132,9 +144,11 @@ class _UserImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PostModel postData = InheritedPostModel.of(context).postData;
+
     return Expanded(
       flex: 1,
-      child: CircleAvatar(backgroundImage: AssetImage(DemoValues.userImage)),
+      child: CircleAvatar(backgroundImage: AssetImage(postData.author.image)),
     );
   }
 }
@@ -144,7 +158,11 @@ class _PostTimeStamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PostModel postData = InheritedPostModel.of(context).postData;
+
     //final TextStyle timeTheme = TextThemes.dateStyle;
-    return Expanded(flex: 2, child: Text(DemoValues.postTime));
+    final DateFormat formatter = DateFormat("dd/MM/yyyy");
+    final String formated = formatter.format(postData.postTime);
+    return Expanded(flex: 2, child: Text(formated));
   }
 }
